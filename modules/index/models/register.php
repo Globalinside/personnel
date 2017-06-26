@@ -31,7 +31,7 @@ class Model extends \Kotchasan\Model
   {
     $ret = array();
     // session, token, admin
-    if ($request->initSession() && $request->isSafe() && Login::isAdmin()) {
+    if ($request->initSession() && $request->isSafe() && $login = Login::isAdmin()) {
       if ($login['username'] == 'demo') {
         $ret['alert'] = Language::get('Unable to complete the transaction');
       } else {
@@ -103,6 +103,7 @@ class Model extends \Kotchasan\Model
     }
     $save['password'] = sha1($save['password'].$save['username']);
     $save['permission'] = empty($permission) ? '' : implode(',', $permission);
+    $save['create_date'] = date('Y-m-d H:i:s');
     // บันทึกลงฐานข้อมูล
     $model->db()->insert($user_table, $save);
     // คืนค่าแอเรย์ของข้อมูลสมาชิกใหม่

@@ -58,17 +58,15 @@ class Model extends \Kotchasan\Model
         // ตรวจสอบค่าที่ส่งมา
         $index = self::get($request->post('register_id')->toInt());
         if ($index) {
-          if ($login['id'] == $index['id']) {
-            // ตัวเอง ไม่สามารถอัปเดท username, status, permission ได้
+          if (!Login::isAdmin()) {
+            // ไม่ใช่แอดมิน ไม่สามารถอัปเดท username และ status ได้
             $save['username'] = $index['username'];
             unset($save['status']);
-            unset($save['permission']);
-          } elseif (!Login::isAdmin()) {
-            // ไม่ใช่แอดมิน ไม่สามารถอัปเดท status, permission ได้
+          }
+          // ไม่ใช่ตัวเอง สามารถอัปเดท permission และ status ได้
+          if ($login['id'] == $index['id']) {
             unset($save['status']);
-            unset($save['permission']);
           } else {
-            // permission
             $save['permission'] = empty($permission) ? '' : implode(',', $permission);
           }
           if (isset($permission['can_login']) && $save['username'] == '') {
