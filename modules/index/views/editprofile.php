@@ -173,7 +173,7 @@ class View extends \Gcms\View
         'itemClass' => 'item',
         'label' => '{LNG_Member status}',
         'labelClass' => 'g-input icon-star0',
-        'disabled' => $isAdmin ? false : true,
+        'disabled' => $isAdmin['id'] == $user['id'] ? true : false,
         'options' => self::$cfg->member_status,
         'value' => $user['status']
       ));

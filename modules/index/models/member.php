@@ -35,9 +35,9 @@ class Model extends \Kotchasan\Orm\Field
    */
   public function action(Request $request)
   {
-    // session, referer, can_config
-    if ($request->initSession() && $request->isReferer() && $login = Login::canConfig()) {
-      $ret = array();
+    $ret = array();
+    // session, referer, admin
+    if ($request->initSession() && $request->isReferer() && $login = Login::isAdmin()) {
       if ($login['username'] == 'demo') {
         $ret['alert'] = Language::get('Unable to complete the transaction');
       } else {
@@ -49,7 +49,7 @@ class Model extends \Kotchasan\Orm\Field
           $model = new \Kotchasan\Model;
           // ตาราง user
           $user_table = $model->getTableName('user');
-          if ($action === 'delete' && Login::isAdmin()) {
+          if ($action === 'delete') {
             // ลบสมาชิก
             $model->db()->delete($user_table, array(
               array('id', $match[1]),
@@ -90,10 +90,10 @@ class Model extends \Kotchasan\Orm\Field
           }
         }
       }
-      // คืนค่า JSON
-      if (!empty($ret)) {
-        echo json_encode($ret);
-      }
+    } else {
+      $ret['alert'] = Language::get('Unable to complete the transaction');
     }
+    // คืนค่า JSON
+    echo json_encode($ret);
   }
 }

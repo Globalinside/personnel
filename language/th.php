@@ -103,6 +103,7 @@ return array(
   'Welcome' => 'สวัสดี',
   'All :count entries, displayed :start to :end, page :page of :total pages' => 'ทั้งหมด :count รายการ, แสดง :start ถึง :end, หน้าที่ :page จากทั้งหมด :total หน้า',
   'Search' => 'ค้นหา',
+  'Search <strong>:search</strong> found :count entries, displayed :start to :end, page :page of :total pages' => 'ค้นหา <strong>:search</strong> พบ :count รายการ แสดงรายการที่ :start - :end หน้าที่ :page จากทั้งหมด :total หน้า',
   'General' => 'ทั่วไป',
   'Email settings' => 'ตั้งค่าอีเมล์',
   'Get new password' => 'ขอรหัสผ่าน',

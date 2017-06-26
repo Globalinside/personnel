@@ -34,9 +34,9 @@ class Controller extends \Gcms\Controller
     // ข้อความ title bar
     $this->title = Language::get('Create new account');
     // เลือกเมนู
-    $this->menu = 'settings';
-    // สามารถตั้งค่าระบบได้
-    if (Login::canConfig()) {
+    $this->menu = 'member';
+    // แอดมิน
+    if (Login::isAdmin()) {
       // แสดงผล
       $section = Html::create('section');
       // breadcrumbs
@@ -44,10 +44,11 @@ class Controller extends \Gcms\Controller
         'class' => 'breadcrumbs'
       ));
       $ul = $breadcrumbs->add('ul');
-      $ul->appendChild('<li><span class="icon-settings">{LNG_Site settings}</span></li>');
+      $ul->appendChild('<li><span class="icon-user">{LNG_Users}</span></li>');
+      $ul->appendChild('<li><a href="index.php?module=member">{LNG_Member list}</a></li>');
       $ul->appendChild('<li><span>{LNG_Register}</span></li>');
       $section->add('header', array(
-        'innerHTML' => '<h2 class="icon-user">'.$this->title.'</h2>'
+        'innerHTML' => '<h2 class="icon-register">'.$this->title.'</h2>'
       ));
       // แสดงฟอร์ม
       $section->appendChild(createClass('Index\Register\View')->render());

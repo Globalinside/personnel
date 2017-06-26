@@ -37,7 +37,6 @@ class Model extends \Kotchasan\Model
       } else {
         // รับค่าจากการ POST
         $save = array(
-          'username' => $request->post('register_username')->username(),
           'name' => $request->post('register_name')->topic(),
           'sex' => $request->post('register_sex')->topic(),
           'phone' => $request->post('register_phone')->topic(),
@@ -58,17 +57,23 @@ class Model extends \Kotchasan\Model
         // ตรวจสอบค่าที่ส่งมา
         $index = self::get($request->post('register_id')->toInt());
         if ($index) {
-          if (!Login::isAdmin()) {
-            // ไม่ใช่แอดมิน ไม่สามารถอัปเดท username และ status ได้
-            $save['username'] = $index['username'];
-            unset($save['status']);
-          }
-          // ไม่ใช่ตัวเอง สามารถอัปเดท permission และ status ได้
+          // ตัวเอง ไม่สามารถอัปเดท status ได้
           if ($login['id'] == $index['id']) {
             unset($save['status']);
-          } else {
-            $save['permission'] = empty($permission) ? '' : implode(',', $permission);
           }
+          if (Login::isAdmin()) {
+            // แอดมิน อัปเดท permission ได้
+            $save['permission'] = empty($permission) ? '' : implode(',', $permission);
+          } elseif ($login['id'] != $index['id']) {
+            // ไม่ใช่แอดมินแก้ไขได้แค่ตัวเองเท่านั้น
+            $index = null;
+          } else {
+            // ไม่ใช่แอดมินและไม่ใช่ตัวเอง ไม่สามารถอัปเดท status ได้
+            unset($save['status']);
+          }
+        }
+        if ($index) {
+          $save['username'] = $request->post('register_username', $index['username'])->username();
           if (isset($permission['can_login']) && $save['username'] == '') {
             // ไม่ได้กรอก username
             $ret['ret_register_username'] = 'Please fill in';
@@ -99,7 +104,6 @@ class Model extends \Kotchasan\Model
                 // ถ้าต้องการเปลี่ยนรหัสผ่าน กรุณากรอกรหัสผ่านสองช่องให้ตรงกัน
                 $ret['ret_register_repassword'] = 'this';
               } else {
-                $save['password'] = sha1($password.$save['username']);
                 $requirePassword = false;
               }
             }
@@ -109,30 +113,22 @@ class Model extends \Kotchasan\Model
             }
             // บันทึก
             if (empty($ret)) {
-              // รายการใหม่
-              if ($index['id'] == 0) {
-                // register
-                \Index\Register\Model::execute($model, $save, $permission);
-                // ไปหน้ารายการสมาชิก
-                $ret['location'] = $request->getUri()->postBack('index.php', array('module' => 'member', 'id' => null, 'page' => null));
-              } else {
-                // แก้ไข
-                if (isset($save['password'])) {
-                  $save['password'] = sha1($password.$save['username']);
-                  if ($login['id'] == $index['id']) {
-                    // ตัวเอง อัปเดทข้อมูลการ login
-                    $_SESSION['login']['username'] = $save['username'];
-                  }
-                }
-                // แก้ไข
-                $db->update($table_user, $index['id'], $save);
+              // แก้ไข
+              if (!empty($password)) {
+                $save['password'] = sha1($password.$save['username']);
                 if ($login['id'] == $index['id']) {
-                  // reload หน้าเว็บ
-                  $ret['location'] = 'reload';
-                } else {
-                  // ไปหน้าเดิม แสดงรายการ
-                  $ret['location'] = $request->getUri()->postBack('index.php', array('module' => 'member', 'id' => null));
+                  // ตัวเอง อัปเดทข้อมูลการ login
+                  $_SESSION['login']['username'] = $save['username'];
                 }
+              }
+              // แก้ไข
+              $db->update($table_user, $index['id'], $save);
+              if ($login['id'] == $index['id']) {
+                // reload หน้าเว็บ
+                $ret['location'] = 'reload';
+              } else {
+                // ไปหน้าเดิม แสดงรายการ
+                $ret['location'] = $request->getUri()->postBack('index.php', array('module' => 'member', 'id' => null));
               }
               // คืนค่า
               $ret['alert'] = Language::get('Saved successfully');

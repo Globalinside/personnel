@@ -34,7 +34,7 @@ class Controller extends \Gcms\Controller
     // ข้อความ title bar
     $this->title = Language::get('Edit profile');
     // เลือกเมนู
-    $this->menu = 'settings';
+    $this->menu = 'member';
     // สมาชิก
     if ($login = Login::isMember()) {
       // อ่านข้อมูลสมาชิก
@@ -47,11 +47,11 @@ class Controller extends \Gcms\Controller
           'class' => 'breadcrumbs'
         ));
         $ul = $breadcrumbs->add('ul');
-        $ul->appendChild('<li><a href="index.php" class="icon-home">{LNG_Home}</a></li>');
+        $ul->appendChild('<li><span class="icon-user">{LNG_Users}</span></li>');
         $ul->appendChild('<li><a href="index.php?module=member">{LNG_Member list}</a></li>');
         $ul->appendChild('<li><span>{LNG_Edit}</span></li>');
         $section->add('header', array(
-          'innerHTML' => '<h2 class="icon-user">'.$this->title.'</h2>'
+          'innerHTML' => '<h2 class="icon-profile">'.$this->title.'</h2>'
         ));
         // แสดงฟอร์ม
         $section->appendChild(createClass('Index\Editprofile\View')->render($user));

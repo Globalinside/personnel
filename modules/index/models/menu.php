@@ -32,6 +32,19 @@ class Model
         'text' => '{LNG_Home}',
         'url' => 'index.php?module=home'
       ),
+      'member' => array(
+        'text' => '{LNG_Users}',
+        'submenus' => array(
+          array(
+            'text' => '{LNG_Member list}',
+            'url' => 'index.php?module=member'
+          ),
+          array(
+            'text' => '{LNG_Register}',
+            'url' => 'index.php?module=register'
+          )
+        ),
+      ),
       'settings' => array(
         'text' => '{LNG_Settings}',
         'submenus' => array(
@@ -43,19 +56,6 @@ class Model
             'text' => '{LNG_Email settings}',
             'url' => 'index.php?module=mailserver'
           ),
-          'member' => array(
-            'text' => '{LNG_Users}',
-            'submenus' => array(
-              array(
-                'text' => '{LNG_Member list}',
-                'url' => 'index.php?module=member'
-              ),
-              array(
-                'text' => '{LNG_Register}',
-                'url' => 'index.php?module=register'
-              )
-            ),
-          ),
         ),
       ),
       'signout' => array(
@@ -66,6 +66,10 @@ class Model
     // สามารถตั้งค่าระบบได้
     if (!Login::canConfig()) {
       unset($menus['settings']);
+    }
+    // ไม่ใช่แอดมิน
+    if (!Login::isAdmin()) {
+      unset($menus['member']);
     }
     return $menus;
   }

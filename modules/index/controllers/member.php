@@ -34,9 +34,9 @@ class Controller extends \Gcms\Controller
     // ข้อความ title bar
     $this->title = Language::get('Member list');
     // เลือกเมนู
-    $this->menu = 'settings';
-    // สามารถตั้งค่าระบบได้
-    if (Login::canConfig()) {
+    $this->menu = 'member';
+    // แอดมิน
+    if (Login::isAdmin()) {
       // แสดงผล
       $section = Html::create('section');
       // breadcrumbs

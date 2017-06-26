@@ -61,11 +61,11 @@ class Config extends \Kotchasan\Config
    *
    * @var string
    */
-  public $password_key = 'aui4ljs';
+  public $password_key = '1234567890';
   /**
    * ถ้ากำหนดเป็น true บัญชี demo จะสามารถเข้าระบบได้
    *
    * @var boolean default false
    */
-  public $demo_mode = true;
+  public $demo_mode = false;
 }
