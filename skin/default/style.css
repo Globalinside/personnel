@@ -269,6 +269,7 @@ table th:last-child {
 .tablebody caption {
   padding: 5px 10px;
 }
+.tablebody table .thead th,
 .tablebody table thead th {
   white-space: nowrap;
   text-shadow: 1px 1px 0 #FFF;
@@ -299,6 +300,7 @@ table th:last-child {
 }
 .tablebody tbody th,
 .tablebody tbody td,
+.tablebody .thead th,
 .tablebody thead th {
   border-bottom-style: solid;
   border-top-style: solid;
@@ -342,8 +344,8 @@ form .subitem {
 form .submit {
   margin: 0 10px 10px;
 }
-div.submit {
-  margin: 10px;
+form .submit > * {
+  margin-right: 5px;
 }
 fieldset {
   padding-bottom: 1.5em;
@@ -394,7 +396,10 @@ main h3 {
   background-color: #FFF;
 }
 .modaldiv header {
-  margin: 0 0 10px 0;
+  margin: 0 10px;
+}
+.modaldiv form .submit {
+  padding-bottom: 0;
 }
 /* tablet, small device */
 @media only screen and (max-width: 960px) {

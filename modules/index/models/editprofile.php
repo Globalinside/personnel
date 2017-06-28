@@ -116,14 +116,14 @@ class Model extends \Kotchasan\Model
               // แก้ไข
               if (!empty($password)) {
                 $save['password'] = sha1($password.$save['username']);
-                if ($login['id'] == $index['id']) {
-                  // ตัวเอง อัปเดทข้อมูลการ login
-                  $_SESSION['login']['username'] = $save['username'];
-                }
               }
               // แก้ไข
               $db->update($table_user, $index['id'], $save);
               if ($login['id'] == $index['id']) {
+                // ตัวเอง อัปเดทข้อมูลการ login
+                \Kotchasan\ArrayTool::merge($_SESSION['login'], $save);
+                $_SESSION['login']['permission'] = $permission;
+                $_SESSION['login']['password'] = $password;
                 // reload หน้าเว็บ
                 $ret['location'] = 'reload';
               } else {

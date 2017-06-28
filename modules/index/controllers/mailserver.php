@@ -37,7 +37,7 @@ class Controller extends \Gcms\Controller
     // เลือกเมนู
     $this->menu = 'settings';
     // สามารถตั้งค่าระบบได้
-    if (Login::canConfig()) {
+    if (Login::checkPermission(Login::isMember(), 'can_config')) {
       // แสดงผล
       $section = Html::create('section');
       // breadcrumbs
@@ -45,7 +45,7 @@ class Controller extends \Gcms\Controller
         'class' => 'breadcrumbs'
       ));
       $ul = $breadcrumbs->add('ul');
-      $ul->appendChild('<li><span class="icon-settings">{LNG_Site settings}</span></li>');
+      $ul->appendChild('<li><span class="icon-settings">{LNG_Settings}</span></li>');
       $ul->appendChild('<li><span>{LNG_Email settings}</span></li>');
       $section->add('header', array(
         'innerHTML' => '<h2 class="icon-email">'.$this->title.'</h2>'

@@ -11,8 +11,8 @@ namespace Index\Mailserver;
 use \Kotchasan\Http\Request;
 use \Gcms\Login;
 use \Kotchasan\Language;
-use \Kotchasan\Validator;
 use \Kotchasan\Config;
+use \Kotchasan\Validator;
 
 /**
  * บันทึกการตั้งค่าระบบอีเมล์
@@ -33,10 +33,8 @@ class Model extends \Kotchasan\KBase
   {
     $ret = array();
     // session, token, can_config
-    if ($request->initSession() && $request->isSafe() && $login = Login::canConfig()) {
-      if ($login['username'] == 'demo') {
-        $ret['alert'] = Language::get('Unable to complete the transaction');
-      } else {
+    if ($request->initSession() && $request->isSafe() && $login = Login::isMember()) {
+      if ($login['username'] != 'demo' && Login::checkPermission($login, 'can_config')) {
         // โหลด config
         $config = Config::load(ROOT_PATH.'settings/config.php');
         // รับค่าจากการ POST
@@ -53,7 +51,7 @@ class Model extends \Kotchasan\KBase
         );
         // อีเมล์
         if (empty($save['noreply_email'])) {
-          $ret['ret_noreply_email'] = Language::get('Please fill in').' '.Language::get('Email');
+          $ret['ret_noreply_email'] = 'Please fill in';
         } elseif (!Validator::email($save['noreply_email'])) {
           $ret['ret_noreply_email'] = str_replace(':name', Language::get('Email'), Language::get('Invalid :name'));
         } else {
@@ -90,7 +88,8 @@ class Model extends \Kotchasan\KBase
           }
         }
       }
-    } else {
+    }
+    if (empty($ret)) {
       $ret['alert'] = Language::get('Unable to complete the transaction');
     }
     // คืนค่าเป็น JSON

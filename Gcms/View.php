@@ -31,9 +31,9 @@ class View extends \Kotchasan\View
     // เนื้อหา
     parent::setContents(array(
       /* ภาษา */
-      '/{LNG_([^}]+)}/e' => '\Kotchasan\Language::get(array(1=>"$1"))',
+      '/{LNG_([^}]+)}/e' => '\Kotchasan\Language::parse(array(1=>"$1"))',
       /* ภาษา ที่ใช้งานอยู่ */
-      '/{LANGUAGE}/' => Language::name()
+      '/{LANGUAGE}/' => Language::name(),
     ));
     return parent::renderHTML($template);
   }

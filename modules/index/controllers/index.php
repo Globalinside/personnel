@@ -42,7 +42,7 @@ class Controller extends \Gcms\Controller
     self::$view = new \Gcms\View;
     if ($login = Login::isMember()) {
       // โหลดเมนู
-      $menu = \Index\Menu\Controller::init();
+      $menu = \Index\Menu\Controller::init($login);
       // Controller หลัก
       $main = new \Index\Main\Controller;
       $bodyclass = 'mainpage';

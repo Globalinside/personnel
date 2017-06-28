@@ -219,7 +219,6 @@ final class Language extends \Kotchasan\KBase
     foreach ($languages as $item) {
       if (strcasecmp($item['key'], $key) == 0) {
         return $item['id'];
-        break;
       }
     }
     return -1;
@@ -313,18 +312,26 @@ final class Language extends \Kotchasan\KBase
    * @return mixed
    *
    * @assert ('YEAR_OFFSET') [==] 543
-   * @assert (array(1 => 'not found')) [==] 'not found'
    */
   public static function get($key)
   {
     if (null === self::$languages) {
       new static;
     }
-    // มาจากการ Parse Theme
-    if (is_array($key)) {
-      $key = $key[1];
-    }
     return isset(self::$languages->$key) ? self::$languages->$key : $key;
+  }
+
+  /**
+   * ฟังก์ชั่นแปลภาษาที่รับค่ามาจากการ parse Theme
+   *
+   * @param array $match ตัวแปรรับค่ามาจากการ parse Theme
+   * @return string
+   *
+   * @assert (array(1 => 'not found')) [==] 'not found'
+   */
+  public static function parse($match)
+  {
+    return Language::get($match[1]);
   }
 
   /**
@@ -368,18 +375,41 @@ final class Language extends \Kotchasan\KBase
 
   /**
    * ค้นหาข้อความภาษาที่ต้องการ ถ้าไม่พบคืนค่า $default
+   * ถ้าไม่ระบุ $default (null) คืนค่า $key
+   * ถ้าระบุ $value_key มาด้วยและ ค่าของภาษาเป็นแอเรย์ จะคืนค่า แอเรย์ของภาษาที่ $value_key
    *
    * @param string $key
    * @param mixed $default
+   * @param mixed $value_key
    *
    * @assert ('YEAR_OFFSET') [==] 543
+   * @assert ('DATE_LONG', null, 0) [==] 'อาทิตย์'
    * @assert ('not found', 'default') [==] 'default'
    */
-  public static function find($key, $default = '')
+  public static function find($key, $default = null, $value_key = null)
   {
     if (null === self::$languages) {
       new static;
     }
-    return isset(self::$languages->$key) ? self::$languages->$key : $default;
+    $result = isset(self::$languages->$key) ? self::$languages->$key : ($default === null ? $key : $default);
+    if ($value_key !== null && is_array($result)) {
+      $result = $result[$value_key];
+    }
+    return $result;
+  }
+
+  /**
+   * แปลภาษา
+   *
+   * @param string $content
+   * @return string
+   *
+   * @assert ('ภาษา {LNG_DATE_FORMAT} ไทย') [==] 'ภาษา d M Y เวลา H:i น. ไทย'
+   */
+  public static function trans($content)
+  {
+    return preg_replace_callback('/{LNG_([^}]+)}/', function($match) {
+      return self::get($match[1]);
+    }, $content);
   }
 }

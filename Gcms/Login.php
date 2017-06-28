@@ -48,7 +48,6 @@ class Login extends \Kotchasan\Login implements \Kotchasan\LoginInterface
       if ($item['password'] == sha1($password.$item[reset(self::$cfg->login_fields)])) {
         $item['permission'] = empty($item['permission']) ? array() : explode(',', $item['permission']);
         if ($item['status'] == 1 || in_array('can_login', $item['permission'])) {
-          unset($item['password']);
           $login_result = $item;
           break;
         }
@@ -114,13 +113,25 @@ class Login extends \Kotchasan\Login implements \Kotchasan\LoginInterface
 
   /**
    * ตรวจสอบความสามารถในการตั้งค่า
+   * แอดมินสูงสุด (status=1) ทำได้ทุกอย่าง
    *
-   * @return array|null คืนค่าข้อมูลสมาชิก (แอเรย์) ถ้าสามารถตั้งค่าได้ ไม่ใช่คืนค่า null
+   * @param array $login
+   * @param string $permission
+   * @return boolean true ถ้าสามารถทำรายการได้
    */
-  public static function canConfig()
+  public static function checkPermission($login, $permission)
   {
-    $login = self::isMember();
-    return isset($login['permission']) && in_array('can_config', $login['permission']) ? $login : null;
+    if (!empty($login)) {
+      if ($login['status'] == 1) {
+        // แอดมิน
+        return true;
+      } elseif (in_array($permission, $login['permission'])) {
+        // มีสิทธิ์
+        return true;
+      }
+    }
+    // ไม่มีสิทธิ
+    return false;
   }
 
   /**

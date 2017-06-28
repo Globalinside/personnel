@@ -49,7 +49,7 @@ class Config extends \Kotchasan\Config
    *
    * @var int
    */
-  public $cache_expire = 0;
+  public $cache_expire = 10;
   /**
    * admin template
    *

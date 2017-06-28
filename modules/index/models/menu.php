@@ -23,9 +23,10 @@ class Model
   /**
    * รายการเมนู
    *
+   * @param array $login
    * @return array
    */
-  public static function getMenus()
+  public static function getMenus($login)
   {
     $menus = array(
       'home' => array(
@@ -48,11 +49,11 @@ class Model
       'settings' => array(
         'text' => '{LNG_Settings}',
         'submenus' => array(
-          'system' => array(
+          array(
             'text' => '{LNG_Site settings}',
             'url' => 'index.php?module=system'
           ),
-          'mailserver' => array(
+          array(
             'text' => '{LNG_Email settings}',
             'url' => 'index.php?module=mailserver'
           ),
@@ -64,7 +65,7 @@ class Model
       ),
     );
     // สามารถตั้งค่าระบบได้
-    if (!Login::canConfig()) {
+    if (!Login::checkPermission($login, 'can_config')) {
       unset($menus['settings']);
     }
     // ไม่ใช่แอดมิน

@@ -132,7 +132,7 @@ class Login extends \Kotchasan\KBase implements LoginInterface
           setCookie('login_password', '', $time, '/');
         } else {
           // save login session
-          unset($login_result['password']);
+          $login_result['password'] = self::$text_password;
           $_SESSION['login'] = $login_result;
           // save login cookie
           $time = time() + 2592000;

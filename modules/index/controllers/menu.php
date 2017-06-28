@@ -27,13 +27,14 @@ class Controller
   /**
    * Controller สำหรับการโหลดเมนู
    *
+   * @param array $login
    * @return \static
    */
-  public static function init()
+  public static function init($login)
   {
     $obj = new static;
     // โหลดเมนู
-    $obj->menus = \Index\Menu\Model::getMenus();
+    $obj->menus = \Index\Menu\Model::getMenus($login);
     return $obj;
   }
 

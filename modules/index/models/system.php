@@ -32,16 +32,14 @@ class Model extends \Kotchasan\KBase
   {
     $ret = array();
     // session, token, can_config
-    if ($request->initSession() && $request->isSafe() && $login = Login::canConfig()) {
-      if ($login['username'] == 'demo') {
-        $ret['alert'] = Language::get('Unable to complete the transaction');
-      } else {
+    if ($request->initSession() && $request->isSafe() && $login = Login::isMember()) {
+      if ($login['username'] != 'demo' && Login::checkPermission($login, 'can_config')) {
         // โหลด config
         $config = Config::load(ROOT_PATH.'settings/config.php');
         foreach (array('web_title', 'web_description') as $key) {
           $value = $request->post($key)->quote();
           if (empty($value)) {
-            $ret['ret_'.$key] = Language::get('Please fill in');
+            $ret['ret_'.$key] = 'Please fill in';
           } else {
             $config->$key = $value;
           }
@@ -60,7 +58,8 @@ class Model extends \Kotchasan\KBase
           }
         }
       }
-    } else {
+    }
+    if (empty($ret)) {
       $ret['alert'] = Language::get('Unable to complete the transaction');
     }
     // คืนค่าเป็น JSON

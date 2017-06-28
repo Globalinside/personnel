@@ -1,5 +1,5 @@
 /**
- * Javascript Libraly for CMS
+ * Javascript Libraly for Ajax Front-end and Back-end
  *
  * @filesource js/common.js
  * @link http://www.kotchasan.com/
@@ -148,10 +148,13 @@ function doFormSubmit(xhr) {
   }
 }
 var dataTableActionCallback = function (xhr) {
-  var val,
+  var el,
+    prop,
+    val,
+    toplv = -1,
     ds = xhr.responseText.toJSON();
   if (ds) {
-    for (var prop in ds) {
+    for (prop in ds) {
       val = ds[prop];
       if (prop == 'location') {
         if (val == 'reload') {
@@ -159,15 +162,33 @@ var dataTableActionCallback = function (xhr) {
         } else {
           window.location = val;
         }
-      } else if (prop == 'alert') {
-        alert(val);
-      } else if (prop == 'modal') {
-        modal = new GModal().show(val);
-        val.evalScript();
       } else if (prop == 'remove') {
         if ($E(val)) {
           $G(val).remove();
         }
+      } else if (prop == 'alert') {
+        alert(val);
+      } else if (prop == 'elem') {
+        el = $E(val);
+        if (el) {
+          el.className = ds.class;
+          el.title = ds.title;
+        }
+      } else if (prop == 'modal') {
+        if (val == 'close') {
+          if (modal) {
+            modal.hide();
+          }
+        } else {
+          modal = new GModal().show(val);
+          val.evalScript();
+        }
+      } else if ($E(prop)) {
+        as = val.split('|');
+        $E(prop).innerHTML = as[0];
+        $E('move_left_' + as[2]).className = (as[1] == 0 ? 'hidden' : 'icon-move_left');
+        $E('move_right_' + as[2]).className = (as[1] > toplv ? 'hidden' : 'icon-move_right');
+        toplv = as[1];
       }
     }
   } else if (xhr.responseText != '') {
