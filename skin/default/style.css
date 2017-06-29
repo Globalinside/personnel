@@ -345,7 +345,7 @@ form .submit {
   margin: 0 10px 10px;
 }
 form .submit > * {
-  margin-right: 5px;
+  margin: 0 5px 5px 0;
 }
 fieldset {
   padding-bottom: 1.5em;

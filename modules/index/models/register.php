@@ -42,7 +42,6 @@ class Model extends \Kotchasan\Model
           'status' => $request->post('register_status')->toInt(),
         );
         $permission = $request->post('register_permission', array())->topic();
-
         if (empty($save['username'])) {
           $ret['ret_register_username'] = 'Please fill in';
         } else {

@@ -29,8 +29,8 @@ class Controller extends \Gcms\Controller
    */
   public function execute(Request $request)
   {
-    // โมดูลจาก URL ถ้าไม่มีใช้
-    $module = $request->request('module')->toString();
+    // โมดูลจาก URL ถ้าไม่มีใช้ default (home)
+    $module = $request->request('module', 'home')->toString();
     if (preg_match('/^([a-z]+)([\/\-]([a-z]+))?$/i', $module, $match)) {
       if (empty($match[3])) {
         $owner = 'index';

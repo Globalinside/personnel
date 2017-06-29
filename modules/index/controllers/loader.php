@@ -40,7 +40,7 @@ class Controller extends \Gcms\Controller
       Template::init(self::$cfg->skin);
       // View
       self::$view = new \Gcms\View;
-      // โมดูลจาก URL
+      // โมดูลจาก URL ถ้าไม่มีใช้ default (home)
       $module = $request->post('module', 'home')->toString();
       if (preg_match('/^([a-z]+)([\/\-]([a-z]+))?$/i', $module, $match)) {
         if (empty($match[3])) {

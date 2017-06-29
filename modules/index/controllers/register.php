@@ -45,7 +45,7 @@ class Controller extends \Gcms\Controller
       ));
       $ul = $breadcrumbs->add('ul');
       $ul->appendChild('<li><span class="icon-user">{LNG_Users}</span></li>');
-      $ul->appendChild('<li><a href="index.php?module=member">{LNG_Member list}</a></li>');
+      $ul->appendChild('<li><a href="{BACKURL?module=member&id=0}">{LNG_Member list}</a></li>');
       $ul->appendChild('<li><span>{LNG_Register}</span></li>');
       $section->add('header', array(
         'innerHTML' => '<h2 class="icon-register">'.$this->title.'</h2>'
