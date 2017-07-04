@@ -87,9 +87,9 @@ class View extends \Gcms\View
     $fieldset = $form->add('fieldset', array(
       'title' => '{LNG_Details of} {LNG_User}'
     ));
-    $group = $fieldset->add('groups');
+    $groups = $fieldset->add('groups');
     // name
-    $group->add('text', array(
+    $groups->add('text', array(
       'id' => 'register_name',
       'labelClass' => 'g-input icon-customer',
       'itemClass' => 'width50',
@@ -98,7 +98,7 @@ class View extends \Gcms\View
       'value' => $user['name']
     ));
     // sex
-    $group->add('select', array(
+    $groups->add('select', array(
       'id' => 'register_sex',
       'labelClass' => 'g-input icon-sex',
       'itemClass' => 'width50',
@@ -106,9 +106,9 @@ class View extends \Gcms\View
       'options' => Language::get('SEXES'),
       'value' => $user['sex']
     ));
-    $group = $fieldset->add('groups');
+    $groups = $fieldset->add('groups');
     // phone
-    $group->add('text', array(
+    $groups->add('text', array(
       'id' => 'register_phone',
       'labelClass' => 'g-input icon-phone',
       'itemClass' => 'width33',
@@ -117,7 +117,7 @@ class View extends \Gcms\View
       'value' => $user['phone']
     ));
     // id_card
-    $group->add('text', array(
+    $groups->add('text', array(
       'id' => 'register_id_card',
       'labelClass' => 'g-input icon-profile',
       'itemClass' => 'width33',
@@ -128,7 +128,7 @@ class View extends \Gcms\View
       'validator' => array('keyup,change', 'checkIdcard')
     ));
     // expire_date
-    $group->add('date', array(
+    $groups->add('date', array(
       'id' => 'register_expire_date',
       'labelClass' => 'g-input icon-calendar',
       'itemClass' => 'width33',
@@ -144,9 +144,9 @@ class View extends \Gcms\View
       'maxlength' => 64,
       'value' => $user['address']
     ));
-    $group = $fieldset->add('groups');
+    $groups = $fieldset->add('groups');
     // provinceID
-    $group->add('select', array(
+    $groups->add('select', array(
       'id' => 'register_provinceID',
       'labelClass' => 'g-input icon-location',
       'itemClass' => 'width50',
@@ -155,7 +155,7 @@ class View extends \Gcms\View
       'value' => $user['provinceID']
     ));
     // zipcode
-    $group->add('text', array(
+    $groups->add('text', array(
       'id' => 'register_zipcode',
       'labelClass' => 'g-input icon-location',
       'itemClass' => 'width50',

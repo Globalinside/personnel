@@ -121,9 +121,9 @@ class Model extends \Kotchasan\Model
               $db->update($table_user, $index['id'], $save);
               if ($login['id'] == $index['id']) {
                 // ตัวเอง อัปเดทข้อมูลการ login
-                \Kotchasan\ArrayTool::merge($_SESSION['login'], $save);
-                $_SESSION['login']['permission'] = $permission;
-                $_SESSION['login']['password'] = $password;
+                $save['permission'] = $permission;
+                $save['password'] = $password;
+                $_SESSION['login'] = \Kotchasan\ArrayTool::merge($_SESSION['login'], $save);
                 // reload หน้าเว็บ
                 $ret['location'] = 'reload';
               } else {

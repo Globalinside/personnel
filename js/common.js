@@ -64,6 +64,10 @@ function defaultSubmit(ds) {
     } else if (prop == 'url') {
       _url = val;
       _location = val;
+    } else if (prop == 'open') {
+      window.setTimeout(function () {
+        window.open(val);
+      }, 1);
     } else if (prop == 'tab') {
       initWriteTab("accordient_menu", val);
     } else if (remove.test(prop)) {
@@ -146,6 +150,27 @@ function doFormSubmit(xhr) {
   } else if (xhr.responseText != '') {
     alert(xhr.responseText);
   }
+}
+function initWriteTab(id, sel) {
+  function _doclick(sel) {
+    forEach($E(id).getElementsByTagName('a'), function () {
+      var a = this.id.replace('tab_', '');
+      if ($E(a)) {
+        this.className = a == sel ? 'select' : '';
+        $E(a).style.display = a == sel ? 'block' : 'none';
+      }
+    });
+    $E('tab').value = sel;
+  }
+  forEach($G(id).elems('a'), function () {
+    if ($E(this.id.replace('tab_', ''))) {
+      callClick(this, function () {
+        _doclick(this.id.replace('tab_', ''));
+        return false;
+      });
+    }
+  });
+  _doclick(sel);
 }
 var dataTableActionCallback = function (xhr) {
   var el,
@@ -341,6 +366,135 @@ function selectMenu(module) {
       $G(tmp).addClass('default');
     }
   }
+}
+function initAutoComplete(id, model, displayFields, doEmpty, getQuery) {
+  displayFields = displayFields.split(',');
+  function doGetQuery() {
+    var q = null,
+      value = $E(id).value;
+    if (value != '') {
+      q = (id + '=' + encodeURIComponent(value));
+    }
+    return q;
+  }
+  function doCallBack() {
+    for (var prop in this) {
+      $G(prop).setValue(this[prop]);
+    }
+    $G(id).valid();
+  }
+  function doPopulate() {
+    var datas = new Array();
+    for (var i in displayFields) {
+      datas.push(this[displayFields[i]]);
+    }
+    var patt = new RegExp('(' + $E(id).value.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&') + ')', 'gi');
+    return '<p><span class="icon-search">' + datas.join(' ').unentityify().replace(patt, '<em>$1</em>') + '</span></p>';
+  }
+  new GAutoComplete(id, {
+    className: 'gautocomplete',
+    get: getQuery || doGetQuery,
+    url: 'index.php/' + model,
+    callBack: doCallBack,
+    populate: doPopulate,
+    onEmpty: doEmpty
+  });
+}
+function initEditInplace(id, model, addbtn) {
+  var patt = /list_(add|delete|name|color|published)_([0-9]+)(_([0-9]+))?/;
+  var o = {
+    onSave: function (v, editor) {
+      var req = new GAjax({
+        asynchronous: false
+      });
+      req.initLoading(editor, false);
+      req.send('index.php/' + model, 'action=' + this.id + '&value=' + encodeURIComponent(v));
+      ds = req.responseText.toJSON();
+      if (ds) {
+        if (ds.alert) {
+          alert(ds.alert);
+        }
+        if (ds.editId) {
+          $E(ds.editId).innerHTML = ds.edit;
+        }
+        return true;
+      } else if (req.responseText != '') {
+        alert(req.responseText);
+      }
+      return false;
+    }
+  };
+  function _doAction(c) {
+    var q = '',
+      hs = patt.exec(this.id);
+    if (hs[1] == 'add') {
+      q = 'action=' + this.id;
+    } else if (hs[1] == 'delete' && confirm(trans('You want to XXX ?').replace(/XXX/, trans('delete')))) {
+      q = 'action=' + this.id;
+    } else if (hs[1] == 'color') {
+      q = 'action=' + this.id + '&value=' + encodeURIComponent(c);
+    } else if (hs[1] == 'published') {
+      q = 'action=' + this.id + '&value=' + this.className.replace('icon-published', '');
+    } else if (hs[1] == 'status') {
+      q = 'action=' + this.id + '&value=' + this.value;
+    }
+    if (q != '') {
+      send('index.php/' + model, q, function (xhr) {
+        var ds = xhr.responseText.toJSON();
+        if (ds) {
+          if (ds.data) {
+            $G(id).appendChild(ds.data.toDOM());
+            _doInitEditInplaceMethod(ds.newId);
+            $E(ds.newId.replace('list_', 'list_name')).focus();
+          } else if (ds.del) {
+            $G(ds.del).remove();
+          } else if (ds.editId) {
+            hs = patt.exec(ds.editId);
+            if (hs[1] == 'color') {
+              $E(ds.editId).title = trans('change color') + ' (' + ds.edit + ')';
+              $E(ds.editId).style.color = ds.edit;
+            } else if (hs[1] == 'published') {
+              $E(ds.editId).className = 'icon-published' + ds.edit;
+              $E(ds.editId).title = ds.edit == 1 ? DISABLE : ENABLE;
+            }
+          }
+          if (ds.alert) {
+            alert(ds.alert);
+          }
+        } else if (xhr.responseText != '') {
+          alert(xhr.responseText);
+        }
+      }, this);
+    }
+  }
+  function _doInitEditInplaceMethod(id) {
+    var loading = true;
+    forEach($G(id).elems('*'), function () {
+      var hs = patt.exec(this.id);
+      if (hs) {
+        if (hs[1] == 'published') {
+          callClick(this, _doAction);
+          this.title = this.className == 'icon-published1' ? DISABLE : ENABLE;
+        } else if (hs[1] == 'color') {
+          var t = this.title;
+          this.title = trans('change color') + ' (' + t + ')';
+          new GDDColor(this, function (c) {
+            $E(this.input.id).style.color = c;
+            if (!loading) {
+              _doAction.call(this.input, c);
+            }
+          }).setColor(t);
+        } else if (hs[1] == 'name') {
+          new EditInPlace(this, o);
+        } else {
+          callClick(this, _doAction);
+        }
+      }
+    });
+    loading = false;
+  }
+  callClick(addbtn, _doAction);
+  _doInitEditInplaceMethod(id);
 }
 $G(window).Ready(function () {
   if (navigator.userAgent.indexOf("MSIE") > -1) {

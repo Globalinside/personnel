@@ -32,7 +32,7 @@ class Config extends \Kotchasan\Config
    */
   public $member_status = array(
     0 => 'สมาชิก',
-    1 => 'ผู้ดูแลระบบ'
+    1 => 'ผู้ดูแลระบบ',
   );
   /**
    * สีของสมาชิกตามสถานะ

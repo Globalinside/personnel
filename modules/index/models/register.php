@@ -92,23 +92,28 @@ class Model extends \Kotchasan\Model
    * @param array $permission
    * @return array คืนค่าแอเรย์ของข้อมูลสมาชิกใหม่
    */
-  public static function execute($model, $save, $permission = null)
+  public static function execute($model, $save, $permission = array())
   {
     // ตาราง user
     $user_table = $model->getTableName('user');
-    // permission ถ้าเป็น null สามารถทำได้ทั้งหมด
-    if ($permission === null) {
-      $permission = array_keys(Language::get('PERMISSIONS'));
+    if (!isset($save['username'])) {
+      $save['username'] = '';
     }
-    $save['password'] = sha1($save['password'].$save['username']);
+    if (!isset($save['password'])) {
+      $save['password'] = '';
+    } else {
+      $save['password'] = sha1($save['password'].$save['username']);
+    }
     $save['permission'] = empty($permission) ? '' : implode(',', $permission);
     $save['create_date'] = date('Y-m-d H:i:s');
     // บันทึกลงฐานข้อมูล
-    $model->db()->insert($user_table, $save);
+    $save['id'] = $model->db()->insert($user_table, $save);
     // คืนค่าแอเรย์ของข้อมูลสมาชิกใหม่
     $save['permission'] = array();
-    foreach ($permission as $key => $value) {
-      $save['permission'] [] = $value;
+    if (!empty($permission)) {
+      foreach ($permission as $key => $value) {
+        $save['permission'] [] = $value;
+      }
     }
     return $save;
   }
